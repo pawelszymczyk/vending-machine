@@ -5,7 +5,7 @@ import spock.lang.Specification
 import static vendingmachine.money.Coin.coin1
 import static vendingmachine.money.Coin.coin2
 
-class CoinSpec extends Specification {
+class CoinTest extends Specification {
 
     def "should add two coins"() {
         given:

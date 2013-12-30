@@ -3,7 +3,7 @@ package vendingmachine
 import spock.lang.Specification
 import vendingmachine.domain.VendingMachine
 
-class VendingMachineSpec extends Specification {
+class VendingMachineTest extends Specification {
 
     def "should create vending machine"() {
         when:
