@@ -1,7 +1,4 @@
 package vendingmachine.domain;
-
-import com.google.common.collect.Sets;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
