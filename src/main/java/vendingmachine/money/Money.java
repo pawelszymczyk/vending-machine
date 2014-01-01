@@ -2,9 +2,12 @@ package vendingmachine.money;
 
 import java.util.Objects;
 
+/**
+ * immutable
+ */
 public class Money {
 
-    private int value;
+    private final int value;
 
     public Money(int value) {
         this.value = value;
