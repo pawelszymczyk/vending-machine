@@ -33,6 +33,10 @@ public class Money {
         return value.toString();
     }
 
+    public boolean isZero() {
+        return this.equals(money(0));
+    }
+
     /**
      * @return not null
      */
