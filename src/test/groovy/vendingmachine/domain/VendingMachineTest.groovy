@@ -1,15 +1,15 @@
-package vendingmachine
+package vendingmachine.domain
 
 import spock.lang.Specification
 import vendingmachine.domain.VendingMachine
 
 class VendingMachineTest extends Specification {
 
-    def "should create vending machine"() {
+    def "should display 'insert a coin' when ready"() {
         when:
         def vendingMachine = new VendingMachine()
 
         then:
-        vendingMachine != null
+        vendingMachine.display == "INSERT A COIN"
     }
 }
