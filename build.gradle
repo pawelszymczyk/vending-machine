@@ -21,3 +21,9 @@ dependencies {
             [group: "org.objenesis", name: "objenesis", version: "1.2"] // enables mocking of classes without default constructor (together with CGLIB)
     )
 }
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
