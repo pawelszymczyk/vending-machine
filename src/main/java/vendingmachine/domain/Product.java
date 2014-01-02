@@ -6,9 +6,9 @@ import static vendingmachine.domain.Money.money;
  * @author bartosz walacik
  */
 public enum Product {
-    COLA (money(2)),
-    CHIPS(money(3.1)),
-    CANDY(money(2.5));
+    COLA (money(1)),
+    CHIPS(money(0.5)),
+    CANDY(money(0.65));
 
     private Money price;
 
