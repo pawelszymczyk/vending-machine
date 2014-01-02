@@ -1,6 +1,7 @@
 package vendingmachine.domain
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static vendingmachine.domain.Coin.*
 
@@ -8,12 +9,13 @@ import static vendingmachine.domain.Coin.*
  * @author bartosz walacik
  */
 class CoinTest extends Specification {
-    def "should keep proper value of coins"(Coin coin, expectedValue) {
+    @Unroll
+    def "#coin should has value #expectedValue"(Coin coin, expectedValue) {
         expect:
         coin.value == expectedValue
 
         where:
-        coin        | expectedValue
+        coin    | expectedValue
         PENNY   | 0.01
         NICKEL  | 0.05
         DIME    | 0.1
