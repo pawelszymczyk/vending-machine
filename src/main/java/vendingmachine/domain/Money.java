@@ -2,6 +2,8 @@ package vendingmachine.domain;
 
 import java.math.BigDecimal;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * immutable
  */
@@ -14,9 +16,7 @@ public class Money {
     }
 
     public Money(BigDecimal value) {
-        if (value == null) {
-            throw new IllegalArgumentException("null value");
-        }
+        checkArgument(value != null);
         this.value = round2(value);
     }
 
