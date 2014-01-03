@@ -69,7 +69,8 @@ class VendingMachineTest extends Specification {
         given:
         CoinBank coinBank = Mock(CoinBank)
         WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
-        recognizer.recognizeValue(_) >>> {Coin coin -> return [new Money(1), {throw new UnrecognizedCoinException(coin)}]}
+
+        recognizer.recognizeValue(_ as Coin) >> new Money(1) >> { Coin coin -> throw new UnrecognizedCoinException(coin)}
 
         VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
         vendingMachine.insertCoin(Coin.NICKEL)
