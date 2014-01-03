@@ -67,12 +67,11 @@ class VendingMachineTest extends Specification {
 
     def "should return to BALANCE: state after displaying UNRECOGNIZED COIN if other coins inserted"() {
         given:
-        CoinBank coinBank = Mock(CoinBank)
-        WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
-        recognizer.recognizeValue(_ as Coin) >> new Money(1) >> { Coin coin -> throw new UnrecognizedCoinException(coin)}
-        recognizer.recognizeValue(_) >> new Money(1) >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
+        
+        CoinRecognizer recognizer = Stub(CoinRecognizer)
+        recognizer.recognizeValue(_ as Coin) >> new Money(1) >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
 
-        VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
+        VendingMachine vendingMachine = VendingMachineBuilder.build(recognizer: recognizer)
         vendingMachine.insertCoin(Coin.NICKEL)
         vendingMachine.insertCoin(Coin.PENNY)
 
