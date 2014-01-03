@@ -24,15 +24,10 @@ public class VendingMachine implements TickListener {
 
     @Override
     public void ticktock() {
-        if(stateQueue.isEmpty() && !currentState.isPersistent()) {
-            currentState = lastPersistentState;
-        }
-        else {
+        if (stateQueue.isEmpty()) {
+            currentState = currentState.nextState(this);
+        } else {
             currentState = stateQueue.poll();
-        }
-
-        if(currentState.isPersistent()) {
-            lastPersistentState = currentState;
         }
     }
 
@@ -41,10 +36,6 @@ public class VendingMachine implements TickListener {
             stateQueue.add(state);
         }
         ticktock();
-    }
-
-    private void enqueState(VendingMachineState state) {
-        stateQueue.add(state);
     }
 
     public String getDisplay() {
@@ -73,9 +64,6 @@ public class VendingMachine implements TickListener {
             this.balance = this.balance.add(value);
         } catch (UnrecognizedCoinException exception) {
             changeState(VendingMachineState.UNRECOGNIZED_COIN_INSERTED);
-            if(this.balance.isZero()) {
-                enqueState(VendingMachineState.IDLE);
-            }
             coinBank.returnCoin(coin);
         }
     }

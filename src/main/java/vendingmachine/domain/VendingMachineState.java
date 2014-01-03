@@ -6,17 +6,25 @@ package vendingmachine.domain;
  */
 enum VendingMachineState {
 
-    IDLE(true),
-    COINS_INSERTED(true),
-    UNRECOGNIZED_COIN_INSERTED(false);
+    IDLE,
+    COINS_INSERTED {
+                @Override
+                public VendingMachineState nextState(VendingMachine vendingMachine) {
+                    return COINS_INSERTED;
+                }
 
-    private final boolean persistent;
+            },
+    UNRECOGNIZED_COIN_INSERTED {
+                @Override
+                public VendingMachineState nextState(VendingMachine vendingMachine) {
+                    if (vendingMachine.getBalance().isZero()) {
+                        return IDLE;
+                    }
+                    return COINS_INSERTED;
+                }
+            };
 
-    private VendingMachineState(boolean persistent) {
-        this.persistent = persistent;
-    }
-
-    public boolean isPersistent() {
-        return persistent;
+    public VendingMachineState nextState(VendingMachine vendingMachine) {
+        return VendingMachineState.IDLE;
     }
 }
