@@ -1,13 +1,9 @@
 package vendingmachine.domain;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import static vendingmachine.domain.Money.money;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class VendingMachine {
-
-    private final Set<Coin> coinReturnTray;
+public class VendingMachine implements TickListener {
 
     private final CoinBank coinBank;
 
@@ -15,42 +11,71 @@ public class VendingMachine {
 
     private VendingMachineState currentState = VendingMachineState.IDLE;
 
+    private VendingMachineState lastPersistentState = VendingMachineState.IDLE;
+
+    private final Queue<VendingMachineState> stateQueue = new LinkedList<>();
+
     private Money balance = new Money(0);
 
     public VendingMachine(CoinBank coinBank, CoinRecognizer coinRecognizer) {
-        this.coinReturnTray = new HashSet<>();
         this.coinRecognizer = coinRecognizer;
         this.coinBank = coinBank;
+    }
+
+    @Override
+    public void ticktock() {
+        if(stateQueue.isEmpty() && !currentState.isPersistent()) {
+            currentState = lastPersistentState;
+        }
+        else {
+            currentState = stateQueue.poll();
+        }
+
+        if(currentState.isPersistent()) {
+            lastPersistentState = currentState;
+        }
+    }
+
+    private void changeState(VendingMachineState state) {
+        if (state != currentState) {
+            stateQueue.add(state);
+        }
+        ticktock();
+    }
+
+    private void enqueState(VendingMachineState state) {
+        stateQueue.add(state);
     }
 
     public String getDisplay() {
         if (currentState == VendingMachineState.IDLE) {
             return "INSERT A COIN";
         }
+        if (currentState == VendingMachineState.COINS_INSERTED) {
+            return "BALANCE: " + balance.toString();
+        }
+        if (currentState == VendingMachineState.UNRECOGNIZED_COIN_INSERTED) {
+            return "UNRECOGNIZED COIN";
+        }
 
-        return "zonk";
+        return "INSERT A COIN";
     }
 
-    /**
-     * Current amount on display: sum of *valid* coins inserted, minus sold
-     * products, minus change
-     */
     public Money getBalance() {
         return balance;
     }
 
-    /**
-     * @return unmodifiableSet
-     */
-    public Set<Coin> getCoinReturnTray() {
-        return Collections.unmodifiableSet(coinReturnTray);
-    }
-
     public void insertCoin(Coin coin) {
         try {
+            changeState(VendingMachineState.COINS_INSERTED);
+
             Money value = coinRecognizer.recognizeValue(coin);
             this.balance = this.balance.add(value);
         } catch (UnrecognizedCoinException exception) {
+            changeState(VendingMachineState.UNRECOGNIZED_COIN_INSERTED);
+            if(this.balance.isZero()) {
+                enqueState(VendingMachineState.IDLE);
+            }
             coinBank.returnCoin(coin);
         }
     }
