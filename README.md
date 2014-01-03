@@ -2,7 +2,7 @@
 ------------
 
 1. clone vending-machine project
-   <p><code>git clone https://spocky_all@github.com/pawelszymczyk/vending-machine.git
+   <p><code>git clone https://spocky-all@github.com/pawelszymczyk/vending-machine.git
    </code></p>
 1. Checkout proper branch (team01..10)
 1. If you use IntelliJ, run <code>gradle idea</code> or simply import Gradle project
