@@ -3,6 +3,8 @@ package vendingmachine.domain;
 import java.util.LinkedList;
 import java.util.Queue;
 import vendingmachine.integration.EmailService;
+import org.smartparam.engine.core.ParamEngine;
+import org.smartparam.engine.core.output.MultiValue;
 
 public class VendingMachine implements TickListener {
 
@@ -20,6 +22,8 @@ public class VendingMachine implements TickListener {
 
     private Money balance = new Money(0);
 
+    private final ParamEngine paramEngine = new ParamEngineBeanFactory().create();
+
     public VendingMachine(CoinBank coinBank, ProductStorage productStorage, CoinRecognizer coinRecognizer, EmailService emailService) {
         this.coinBank = coinBank;
         this.productStorage = productStorage;
@@ -30,7 +34,13 @@ public class VendingMachine implements TickListener {
     @Override
     public void ticktock() {
         if (stateQueue.isEmpty()) {
-            currentState = currentState.nextState(this);
+            MultiValue mv = paramEngine.get("nextState", currentState).row();
+            if(mv.getHolder("target").isNotNull()) {
+                currentState = mv.getEnum("target", VendingMachineState.class);
+            }
+            else {
+                currentState = (VendingMachineState) paramEngine.callFunction(mv.getString("targetEvaluator"), this);
+            }
         } else {
             currentState = stateQueue.poll();
         }
