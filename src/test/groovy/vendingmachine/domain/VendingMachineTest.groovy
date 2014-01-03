@@ -47,7 +47,7 @@ class VendingMachineTest extends Specification {
         1 * coinBank.returnCoin(_)
     }
 
-    def "should return to IDLE state after displaying UNRECOGNIZED COIN"() {
+    def "should return to IDLE state after displaying UNRECOGNIZED COIN if no coins inserted"() {
         given:
         CoinBank coinBank = Mock(CoinBank)
         WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
@@ -63,5 +63,24 @@ class VendingMachineTest extends Specification {
 
         then:
         vendingMachine.display == "INSERT A COIN"
+    }
+
+    def "should return to BALANCE: state after displaying UNRECOGNIZED COIN if other coins inserted"() {
+        given:
+        CoinBank coinBank = Mock(CoinBank)
+        WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
+        recognizer.recognizeValue(_) >>> {Coin coin -> return [new Money(1), {throw new UnrecognizedCoinException(coin)}]}
+
+        VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
+        vendingMachine.insertCoin(Coin.NICKEL)
+        vendingMachine.insertCoin(Coin.PENNY)
+
+        Clock clock = new Clock(vendingMachine)
+
+        when:
+        clock.nextTick()
+
+        then:
+        vendingMachine.display == "BALANCE: 1.00"
     }
 }
