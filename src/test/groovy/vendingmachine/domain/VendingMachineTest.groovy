@@ -2,13 +2,13 @@ package vendingmachine.domain
 
 import spock.lang.Specification
 import vendingmachine.domain.VendingMachine
+import vendingmachine.integration.EmailService
 
 class VendingMachineTest extends Specification {
 
     def "should display 'insert a coin' when powered on"() {
         when:
-        CoinBank coinBank = Mock(CoinBank)
-        def vendingMachine = new VendingMachine(coinBank, new WeightingCoinRecognizer())
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine().build()
 
         then:
         vendingMachine.display == "INSERT A COIN"
@@ -17,11 +17,10 @@ class VendingMachineTest extends Specification {
 
     def "should increase balance when accepted coin inserted"() {
         given:
-        CoinBank coinBank = Mock(CoinBank)
         WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
         recognizer.recognizeValue(_) >> {new Money(1)}
 
-        VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine(recognizer: recognizer).build()
 
         when:
         vendingMachine.insertCoin(Coin.NICKEL)
@@ -36,7 +35,7 @@ class VendingMachineTest extends Specification {
         WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
         recognizer.recognizeValue(_) >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
 
-        VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine(recognizer: recognizer, coinBank: coinBank).build()
 
         when:
         vendingMachine.insertCoin(Coin.PENNY)
@@ -53,7 +52,7 @@ class VendingMachineTest extends Specification {
         WeightingCoinRecognizer recognizer = Stub(WeightingCoinRecognizer)
         recognizer.recognizeValue(_) >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
 
-        VendingMachine vendingMachine = new VendingMachine(coinBank, recognizer)
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine(recognizer: recognizer,coinBank: coinBank).build()
         vendingMachine.insertCoin(Coin.PENNY)
 
         Clock clock = new Clock(vendingMachine)
@@ -87,7 +86,7 @@ class VendingMachineTest extends Specification {
     def "should sell product when user inserted enough coins"() {
         given:
         VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine()
-            .with({Coin.NICKEL}: 10).build()
+        .with({Coin.NICKEL}: 10).build()
 
         Clock clock = new Clock(vendingMachine);
 
@@ -97,4 +96,24 @@ class VendingMachineTest extends Specification {
         then:
         vendingMachine.display == "THANK YOU <3"
     }
+    
+    def "should send email when product is sold out"(){
+        given:
+        ProductStorage productStorage = Mock(ProductStorage)
+        EmailService emailService = Mock(EmailService)
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine(productStorage: productStorage,
+            emailService: emailService).build()
+                            
+        productStorage.hasProduct(_) >> false
+         
+        when:
+        vendingMachine.buy(Product.COLA)
+        
+        then:
+        1*emailService.sendSupplyRequestToVendor(Product.COLA)
+        vendingMachine.display == "PRODUCT IS SOLD OUT"
+    }
+    
+    
+
 }

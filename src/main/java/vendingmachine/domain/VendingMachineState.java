@@ -38,7 +38,17 @@ enum VendingMachineState {
                     return RETURN_CHANGE;
                 }
             },
-    RETURN_CHANGE;
+    RETURN_CHANGE, 
+    
+    PRODUCT_SOLD_OUT{
+                @Override
+                public VendingMachineState nextState(VendingMachine vendingMachine) {
+                    if (vendingMachine.getBalance().isZero()) {
+                        return IDLE;
+                    }
+                    return COINS_INSERTED;
+                }
+            };
 
     public VendingMachineState nextState(VendingMachine vendingMachine) {
         return VendingMachineState.IDLE;

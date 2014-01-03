@@ -14,11 +14,17 @@ class VendingMachineBuilder  {
     private VendingMachineBuilder(Map values = [:]) {
         def defaultValues = [
             coinBank: new FakeCoinBank(),
-            recognizer: new WeightingCoinRecognizer()
+            recognizer: new WeightingCoinRecognizer(),
+            productStorage: new ProductStorage(),
+            emailService: new FakeEmailService()
+            
         ]
         def usedValues = defaultValues << values;
 
-        this.vendingMachine = new VendingMachine(usedValues.coinBank, usedValues.recognizer)
+        this.vendingMachine = new VendingMachine(usedValues.coinBank, 
+                                                 usedValues.productStorage,
+                                                 usedValues.recognizer, 
+                                                 usedValues.emailService)
     }
 
     static final VendingMachineBuilder vendingMachine(Map values = [:]) {

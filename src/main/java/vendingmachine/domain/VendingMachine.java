@@ -2,12 +2,17 @@ package vendingmachine.domain;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import vendingmachine.integration.EmailService;
 
 public class VendingMachine implements TickListener {
 
     private final CoinBank coinBank;
 
+    private final ProductStorage productStorage;
+
     private final CoinRecognizer coinRecognizer;
+
+    private final EmailService emailService;
 
     private VendingMachineState currentState = VendingMachineState.IDLE;
 
@@ -15,9 +20,11 @@ public class VendingMachine implements TickListener {
 
     private Money balance = new Money(0);
 
-    public VendingMachine(CoinBank coinBank, CoinRecognizer coinRecognizer) {
-        this.coinRecognizer = coinRecognizer;
+    public VendingMachine(CoinBank coinBank, ProductStorage productStorage, CoinRecognizer coinRecognizer, EmailService emailService) {
         this.coinBank = coinBank;
+        this.productStorage = productStorage;
+        this.coinRecognizer = coinRecognizer;
+        this.emailService = emailService;
     }
 
     @Override
@@ -50,6 +57,10 @@ public class VendingMachine implements TickListener {
             return "THANK YOU <3";
         }
 
+        if (currentState == VendingMachineState.PRODUCT_SOLD_OUT) {
+            return "PRODUCT IS SOLD OUT";
+        }
+
         return "INSERT A COIN";
     }
 
@@ -70,12 +81,17 @@ public class VendingMachine implements TickListener {
     }
 
     public void buy(Product product) {
-        if(balance.isGreaterOrEqualTo(product.getPrice())) {
+        if (!productStorage.hasProduct(product)) {
+            changeState(VendingMachineState.PRODUCT_SOLD_OUT);
+            emailService.sendSupplyRequestToVendor(product);
+        } else if (balance.isGreaterOrEqualTo(product.getPrice())) {
             changeState(VendingMachineState.PRODUCT_SOLD);
             this.balance = this.balance.subtract(product.getPrice());
-        }
-        else {
+            coinBank.returnChange(balance);
+            this.balance = new Money(0);
+        } else {
             changeState(VendingMachineState.NOT_ENOUGH_MONEY);
         }
     }
+
 }
