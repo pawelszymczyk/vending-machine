@@ -10,7 +10,7 @@ import static vendingmachine.domain.Coin.*
  */
 class CoinTest extends Specification {
     @Unroll
-    def "#coin should has value #expectedValue"(Coin coin, expectedValue) {
+    def "#coin should has value #expectedValue"(coin, expectedValue) {
         expect:
         coin.value == expectedValue
 
@@ -21,4 +21,20 @@ class CoinTest extends Specification {
         DIME    | 0.1
         QUARTER | 0.25
     }
+
+    def "should not recognize unknown coins"() {
+        expect:
+        Coin.recognize(10) == UNKNOWN
+    }
+
+    def "should recognize coins"(givenWeight, expectedCoin){
+        expect:
+        Coin.recognize(givenWeight) == expectedCoin
+
+        where:
+        givenWeight | expectedCoin
+        1           | PENNY
+    }
+
+
 }

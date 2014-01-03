@@ -18,7 +18,8 @@ public enum Coin {
 
     /** 25 cents coin */
     QUARTER(money(0.25), 3),
-    ;
+
+    UNKNOWN(money(0),0);
 
     private Money money;
     private int   weight;
@@ -38,5 +39,14 @@ public enum Coin {
 
     public int getWeight() {
         return weight;
+    }
+
+    public static Coin recognize(int givenWeight){
+        for (Coin c : values()) {
+            if (c.weight == givenWeight) {
+                return c;
+            }
+        }
+        return UNKNOWN;
     }
 }
