@@ -9,14 +9,32 @@ import spock.lang.Specification
  */
 class VendingMachineBuilder  {
 
-    static final VendingMachine build(Map values = [:]) {
+    private VendingMachine vendingMachine;
+
+    private VendingMachineBuilder(Map values = [:]) {
         def defaultValues = [
             coinBank: new FakeCoinBank(),
             recognizer: new WeightingCoinRecognizer()
         ]
         def usedValues = defaultValues << values;
 
-        return new VendingMachine(usedValues.coinBank, usedValues.recognizer)
+        this.vendingMachine = new VendingMachine(usedValues.coinBank, usedValues.recognizer)
     }
+
+    static final VendingMachineBuilder vendingMachine(Map values = [:]) {
+        return new VendingMachineBuilder(values);
+    }
+
+    VendingMachine build() {
+        return vendingMachine
+    }
+
+    VendingMachineBuilder with(Map coins = [:]) {
+        coins.each({coinCount ->
+                [1..coinCount.value].each({vendingMachine.insertCoin(coinCount.key())})
+            })
+        return this
+    }
+
 }
 

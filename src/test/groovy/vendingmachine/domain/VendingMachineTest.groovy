@@ -71,7 +71,7 @@ class VendingMachineTest extends Specification {
         CoinRecognizer recognizer = Stub(CoinRecognizer)
         recognizer.recognizeValue(_ as Coin) >> {return new Money(1)} >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
 
-        VendingMachine vendingMachine = VendingMachineBuilder.build(recognizer: recognizer)
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine(recognizer: recognizer).build()
         vendingMachine.insertCoin(Coin.NICKEL)
         vendingMachine.insertCoin(Coin.PENNY)
 
@@ -86,8 +86,8 @@ class VendingMachineTest extends Specification {
 
     def "should sell product when user inserted enough coins"() {
         given:
-        VendingMachine vendingMachine = VendingMachineBuilder.build();
-        [1..10].each({vendingMachine.insertCoin(Coin.NICKEL)})
+        VendingMachine vendingMachine = VendingMachineBuilder.vendingMachine()
+            .with({Coin.NICKEL}: 10).build()
 
         Clock clock = new Clock(vendingMachine);
 
