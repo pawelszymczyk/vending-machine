@@ -67,9 +67,9 @@ class VendingMachineTest extends Specification {
 
     def "should return to BALANCE: state after displaying UNRECOGNIZED COIN if other coins inserted"() {
         given:
-        
+
         CoinRecognizer recognizer = Stub(CoinRecognizer)
-        recognizer.recognizeValue(_ as Coin) >> new Money(1) >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
+        recognizer.recognizeValue(_ as Coin) >> {return new Money(1)} >> {Coin coin -> throw new UnrecognizedCoinException(coin)}
 
         VendingMachine vendingMachine = VendingMachineBuilder.build(recognizer: recognizer)
         vendingMachine.insertCoin(Coin.NICKEL)
@@ -82,5 +82,19 @@ class VendingMachineTest extends Specification {
 
         then:
         vendingMachine.display == "BALANCE: 1.00"
+    }
+
+    def "should sell product when user inserted enough coins"() {
+        given:
+        VendingMachine vendingMachine = VendingMachineBuilder.build();
+        [1..10].each({vendingMachine.insertCoin(Coin.NICKEL)})
+
+        Clock clock = new Clock(vendingMachine);
+
+        when:
+        vendingMachine.buy(Product.CHIPS)
+
+        then:
+        vendingMachine.display == "THANK YOU <3"
     }
 }

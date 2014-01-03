@@ -11,7 +11,7 @@ public enum Coin {
     PENNY (money(0.01), 1),
 
     /** 5 cents coin */
-    NICKEL (money(0.05), 2),
+    NICKEL (money(0.5), 2),
 
     /** 10 cents coin */
     DIME   (money(0.1), 3),

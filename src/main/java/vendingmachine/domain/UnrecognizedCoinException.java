@@ -5,7 +5,7 @@ package vendingmachine.domain;
  * @author wioleta.gozdzik
  */
 @SuppressWarnings("serial")
-class UnrecognizedCoinException extends Exception {
+public class UnrecognizedCoinException extends Exception {
 
     private final Coin coin;
 

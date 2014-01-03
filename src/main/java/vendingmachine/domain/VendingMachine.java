@@ -11,8 +11,6 @@ public class VendingMachine implements TickListener {
 
     private VendingMachineState currentState = VendingMachineState.IDLE;
 
-    private VendingMachineState lastPersistentState = VendingMachineState.IDLE;
-
     private final Queue<VendingMachineState> stateQueue = new LinkedList<>();
 
     private Money balance = new Money(0);
@@ -48,6 +46,9 @@ public class VendingMachine implements TickListener {
         if (currentState == VendingMachineState.UNRECOGNIZED_COIN_INSERTED) {
             return "UNRECOGNIZED COIN";
         }
+        if (currentState == VendingMachineState.PRODUCT_SOLD) {
+            return "THANK YOU <3";
+        }
 
         return "INSERT A COIN";
     }
@@ -65,6 +66,16 @@ public class VendingMachine implements TickListener {
         } catch (UnrecognizedCoinException exception) {
             changeState(VendingMachineState.UNRECOGNIZED_COIN_INSERTED);
             coinBank.returnCoin(coin);
+        }
+    }
+
+    public void buy(Product product) {
+        if(balance.isGreaterOrEqualTo(product.getPrice())) {
+            changeState(VendingMachineState.PRODUCT_SOLD);
+            this.balance = this.balance.subtract(product.getPrice());
+        }
+        else {
+            changeState(VendingMachineState.NOT_ENOUGH_MONEY);
         }
     }
 }
