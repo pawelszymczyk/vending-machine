@@ -2,7 +2,7 @@
 ------------
 
 1. clone vending-machine project
-   <p><code>git clone https://spocky_all@github.com/pawelszymczyk/vending-machine.git
+   <p><code>git clone https://spocky-all@github.com/pawelszymczyk/vending-machine.git
    </code></p>
 1. Checkout proper branch (team01..10)
 1. If you use IntelliJ, run <code>gradle idea</code> or simply import Gradle project
@@ -74,3 +74,15 @@ Each time when user selects sold out product machine should do two things:
 1. http://docs.spockframework.org
 1. Pawel intro - http://github.com/pcierpiatka/groovy_workshop
 1. http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers
+
+# Schedule
+
+<pre>
+Slot            Co                          Prowadzacy
+9:00 -  9:30    Spock Intro                 Pawel Cierpiatka
+9:40 -  11:00   Story 1 accept coins        Bartosz Walacik
+11:10 - 12:30   Story 2 select product      Pawel Szymczyk
+12:30 - 13:30   Obiadek, placi GA
+13:30 - 14:50   Story 3 make change         Pawel Cierpiatka
+15:00 - 16:30   Story 4 storage and emails  Przemyslaw Debek
+</pre>
