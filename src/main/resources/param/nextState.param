@@ -1,0 +1,17 @@
+{
+    name: "nextState",
+    inputLevels: 1,
+    levels: [
+        {name: "source", type: "string"},
+        {name: "target", type: "string"},
+        {name: "targetEvaluator", type: "string"}
+    ]
+}
+source;target;targetEvaluator
+IDLE;IDLE;
+COINS_INSERTED;COINS_INSERTED;
+UNRECOGNIZED_COIN_INSERTED;;nextState.unrecognized
+NOT_ENOUGH_MONEY;COINS_INSERTED;
+PRODUCT_SOLD;;nextState.sold
+RETURN_CHANGE;IDLE
+PRODUCT_SOLD_OUT;;nextState.unrecognized

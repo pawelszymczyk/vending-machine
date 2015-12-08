@@ -11,13 +11,13 @@ public enum Coin {
     PENNY (money(0.01), 1),
 
     /** 5 cents coin */
-    NICKEL (money(0.05), 1),
+    NICKEL (money(0.05), 2),
 
     /** 10 cents coin */
-    DIME   (money(0.1), 2),
+    DIME   (money(0.1), 3),
 
     /** 25 cents coin */
-    QUARTER(money(0.25), 3),
+    QUARTER(money(0.25), 4),
     ;
 
     private Money money;

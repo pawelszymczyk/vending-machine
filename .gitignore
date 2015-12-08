@@ -11,3 +11,5 @@ Intellij Idea project files
 build
 out
 
+/.nb-gradle/profiles/private/
+/aa/.nb-gradle/profiles/private/

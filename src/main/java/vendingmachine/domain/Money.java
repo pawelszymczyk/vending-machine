@@ -24,6 +24,10 @@ public class Money {
         return new Money(this.value.add(that.value));
     }
 
+    public Money subtract(Money that) {
+        return new Money(this.value.subtract(that.value));
+    }
+
     static Money money(double value){
         return new Money(value);
     }
@@ -62,6 +66,14 @@ public class Money {
 
     private boolean hasSameValue(Money that) {
         return value.compareTo(that.value) == 0;
+    }
+
+    public boolean isGreaterOrEqualTo(Money other) {
+        return value.compareTo(other.value) >= 0;
+    }
+
+    public boolean isLesserOrEqualTo(Money other) {
+        return value.compareTo(other.value) <= 0;
     }
 
     @Override

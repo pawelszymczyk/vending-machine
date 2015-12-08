@@ -1,0 +1,15 @@
+{
+    name: "stateGraph",
+    inputLevels: 1,
+    levels: [
+        {name: "from", type: "string"},
+        {name: "to", type: "string"},
+        {name: "action", type: "string"}
+    ]
+}
+from;to;action
+IDLE;COINS_INSERTED;
+IDLE;UNRECOGNIZED_COINS_INSERTED;
+COINS_INSERTED;COINS_INSERTED;
+COINS_INSERTED;IDLE;
+COINS_INSERTED;UNRECOGNIZED_COINS_INSERTED;

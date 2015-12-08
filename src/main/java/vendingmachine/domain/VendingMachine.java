@@ -1,37 +1,107 @@
 package vendingmachine.domain;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import static vendingmachine.domain.Money.money;
 
-public class VendingMachine {
+import java.util.LinkedList;
+import java.util.Queue;
+import vendingmachine.integration.EmailService;
+import org.smartparam.engine.core.ParamEngine;
+import org.smartparam.engine.core.output.MultiValue;
 
-    private Set<Coin> coinReturnTray;
+public class VendingMachine implements TickListener {
 
-    public VendingMachine() {
-        coinReturnTray = new HashSet<>();
+    private final CoinBank coinBank;
+
+    private final ProductStorage productStorage;
+
+    private final CoinRecognizer coinRecognizer;
+
+    private final EmailService emailService;
+
+    private VendingMachineState currentState = VendingMachineState.IDLE;
+
+    private final Queue<VendingMachineState> stateQueue = new LinkedList<>();
+
+    private Money balance = new Money(0);
+
+    private final ParamEngine paramEngine = new ParamEngineBeanFactory().create();
+
+    public VendingMachine(CoinBank coinBank, ProductStorage productStorage, CoinRecognizer coinRecognizer, EmailService emailService) {
+        this.coinBank = coinBank;
+        this.productStorage = productStorage;
+        this.coinRecognizer = coinRecognizer;
+        this.emailService = emailService;
+    }
+
+    @Override
+    public void ticktock() {
+        if (stateQueue.isEmpty()) {
+            MultiValue mv = paramEngine.get("nextState", currentState).row();
+            if(mv.getHolder("target").isNotNull()) {
+                currentState = mv.getEnum("target", VendingMachineState.class);
+            }
+            else {
+                currentState = (VendingMachineState) paramEngine.callFunction(mv.getString("targetEvaluator"), this);
+            }
+        } else {
+            currentState = stateQueue.poll();
+        }
+    }
+
+    private void changeState(VendingMachineState state) {
+        if (state != currentState) {
+            stateQueue.add(state);
+        }
+        ticktock();
     }
 
     public String getDisplay() {
-        if (getBalance().isZero()) {
+        if (currentState == VendingMachineState.IDLE) {
             return "INSERT A COIN";
         }
+        if (currentState == VendingMachineState.COINS_INSERTED) {
+            return "BALANCE: " + balance.toString();
+        }
+        if (currentState == VendingMachineState.UNRECOGNIZED_COIN_INSERTED) {
+            return "UNRECOGNIZED COIN";
+        }
+        if (currentState == VendingMachineState.PRODUCT_SOLD) {
+            return "THANK YOU <3";
+        }
 
-        return "zonk";
+        if (currentState == VendingMachineState.PRODUCT_SOLD_OUT) {
+            return "PRODUCT IS SOLD OUT";
+        }
+
+        return "INSERT A COIN";
     }
 
-    /**
-     * Current amount on display:
-     * sum of *valid* coins inserted, minus sold products, minus change
-     */
     public Money getBalance() {
-        return money(0);
+        return balance;
     }
 
-    /**
-     * @return unmodifiableSet
-     */
-    public Set<Coin> getCoinReturnTray() {
-        return Collections.unmodifiableSet(coinReturnTray);
+    public void insertCoin(Coin coin) {
+        try {
+            changeState(VendingMachineState.COINS_INSERTED);
+
+            Money value = coinRecognizer.recognizeValue(coin);
+            this.balance = this.balance.add(value);
+        } catch (UnrecognizedCoinException exception) {
+            changeState(VendingMachineState.UNRECOGNIZED_COIN_INSERTED);
+            coinBank.returnCoin(coin);
+        }
     }
+
+    public void buy(Product product) {
+        if (!productStorage.hasProduct(product)) {
+            changeState(VendingMachineState.PRODUCT_SOLD_OUT);
+            emailService.sendSupplyRequestToVendor(product);
+        } else if (balance.isGreaterOrEqualTo(product.getPrice())) {
+            changeState(VendingMachineState.PRODUCT_SOLD);
+            this.balance = this.balance.subtract(product.getPrice());
+            coinBank.returnChange(balance);
+            this.balance = new Money(0);
+        } else {
+            changeState(VendingMachineState.NOT_ENOUGH_MONEY);
+        }
+    }
+
 }
