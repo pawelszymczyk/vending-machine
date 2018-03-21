@@ -71,18 +71,19 @@ Each time when user selects sold out product machine should do two things:
 
 # See
 
-1. http://docs.spockframework.org
-1. Pawel intro - http://github.com/pcierpiatka/groovy_workshop
-1. http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers
+1. http://williamdurand.fr/2013/06/03/object-calisthenics/
+2. http://docs.spockframework.org
+3. http://github.com/pcierpiatka/groovy_workshop
+4. http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers
 
 # Schedule
 
 <pre>
-Slot            Co                          Prowadzacy
-9:00 -  9:30    Spock Intro                 Pawel Cierpiatka
-9:40 -  11:00   Story 1 accept coins        Bartosz Walacik
-11:10 - 12:30   Story 2 select product      Pawel Szymczyk
-12:30 - 13:30   Obiadek, placi GA
-13:30 - 14:50   Story 3 make change         Pawel Cierpiatka
-15:00 - 16:30   Story 4 storage and emails  Przemyslaw Debek
+Slot            Co                          
+9:00 -  9:30    Spock Intro                 
+9:40 -  11:00   Story 1 accept coins        
+11:10 - 12:30   Story 2 select product      
+12:30 - 13:30   Przerwa
+13:30 - 14:50   Story 3 make change         
+15:00 - 16:30   Story 4 storage and emails 
 </pre>
