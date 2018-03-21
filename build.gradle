@@ -1,29 +1,25 @@
-apply plugin: "groovy"
-apply plugin: "idea"
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'idea'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile(
-            [group: "log4j", name: "log4j", version: "1.2.17"],
-            [group: "com.google.guava", name: "guava", version: "15.0"]
-    )
+    compile 'log4j:log4j:1.2.17'
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.14'
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 
-    testCompile(
-            [group: "org.codehaus.groovy", name: "groovy-all", version: "2.2.1"],
-            [group: "org.spockframework", name: "spock-core", version: "0.7-groovy-2.0"]
-    )
-
-    testRuntime(
-            [group: "cglib", name: "cglib-nodep", version: "2.2"], // enables mocking of classes (in addition to interfaces)
-            [group: "org.objenesis", name: "objenesis", version: "1.2"] // enables mocking of classes without default constructor (together with CGLIB)
-    )
+    testRuntime 'cglib:cglib-nodep:3.2.6' // enables mocking of classes (in addition to interfaces)
+    testRuntime 'org.objenesis:objenesis:2.6' // enables mocking of classes without default constructor (together with CGLIB)
 }
 
-test {
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.6'
 }

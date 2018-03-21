@@ -1,7 +1,6 @@
 package vendingmachine.domain
 
 import spock.lang.Specification
-import vendingmachine.domain.VendingMachine
 
 class VendingMachineTest extends Specification {
 
