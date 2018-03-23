@@ -21,11 +21,15 @@ public class Money {
         this.value = round2(value);
     }
 
+    public static Money zero() {
+        return new Money(0);
+    }
+
     public Money add(Money that) {
         return new Money(this.value.add(that.value));
     }
 
-    static Money money(double value){
+    static Money money(double value) {
         return new Money(value);
     }
 
@@ -76,5 +80,9 @@ public class Money {
 
     public static BigDecimal round2(BigDecimal value) {
         return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
+    public boolean isLessOrEqual(Money other) {
+        return this.value.compareTo(other.value) <= 0;
     }
 }

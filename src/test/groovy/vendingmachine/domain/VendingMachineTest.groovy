@@ -19,7 +19,7 @@ class VendingMachineTest extends Specification {
         def vendingMachine = new VendingMachine()
 
         when:
-        coins.collect({ vendingMachine.insert(it) })
+        coins.each({ vendingMachine.insert(it) })
 
         then:
         vendingMachine.display == displayedText
@@ -42,7 +42,63 @@ class VendingMachineTest extends Specification {
         then:
         vendingMachine.display == "INSERT A COIN"
         vendingMachine.rejectedCoins() == [Coin.PENNY]
-        vendingMachine.getBalance() == new Money(0)
+        vendingMachine.getBalance() == Money.zero()
+    }
+
+    def "should allow to buy a product"() {
+        given:
+        def vendingMachine = new VendingMachine()
+        4.times {
+            vendingMachine.insert(Coin.QUARTER)
+        }
+
+        when:
+        def result = vendingMachine.select(Product.COLA)
+
+        then:
+        result == PurchaseResult.DISPENSED
+        vendingMachine.display == "THANK YOU"
+        vendingMachine.display == "INSERT A COIN"
+        vendingMachine.balance == Money.zero()
+    }
+
+    def "should return #expectedResult when a #product is selected after #coins are inserted"() {
+        given:
+        def vendingMachine = new VendingMachine()
+        coins.each { vendingMachine.insert(it) }
+
+        when:
+        def purchaseResult = vendingMachine.select(product)
+
+        then:
+        purchaseResult == expectedResult
+
+        where:
+        coins                                                    | product       || expectedResult
+        [Coin.QUARTER, Coin.QUARTER, Coin.QUARTER, Coin.QUARTER] | Product.COLA  || PurchaseResult.DISPENSED
+        [Coin.QUARTER, Coin.QUARTER, Coin.QUARTER]               | Product.COLA  || PurchaseResult.REJECTED
+        [Coin.QUARTER, Coin.QUARTER]                             | Product.CHIPS || PurchaseResult.DISPENSED
+    }
+
+    def "Should show the price of the product when the balance is insufficient"() {
+        given:
+        def vendingMachine = new VendingMachine()
+        insertedCoins.each({ vendingMachine.insert(it) })
+
+        when:
+        vendingMachine.select(product)
+
+        then:
+        vendingMachine.display == firstShownText
+        vendingMachine.display == secondShownText
+
+        vendingMachine.balance == balance
+
+
+        where:
+        insertedCoins  | product       || firstShownText | secondShownText | balance
+        []             | Product.COLA  || "PRICE 1.00"   | "INSERT A COIN" | Money.zero()
+        [Coin.QUARTER] | Product.CANDY || "PRICE 0.65"   | "0.25"          | new Money(0.25)
     }
 
 }

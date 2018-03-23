@@ -1,43 +1,47 @@
 package vendingmachine.domain;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class VendingMachine {
 
-    private final CoinReturnTray coinReturnTray = new CoinReturnTray();
-    private final InsertedCoins insertedCoins = new InsertedCoins();
+    public static final String THANK_YOU = "THANK YOU";
+    public static final String INSERT_A_COIN = "INSERT A COIN";
+
+    private final CoinCassette coinCassette = new CoinCassette();
+    private final Display display = new Display();
 
     public VendingMachine() {
+        display.show(INSERT_A_COIN);
     }
 
     public String getDisplay() {
-        if (getBalance().isZero()) {
-            return "INSERT A COIN";
-        }
-
-        return getBalance().toString();
+        return display.getText();
     }
 
-    /**
-     * Current amount on display:
-     * sum of *valid* coins inserted, minus sold products, minus change
-     */
     public Money getBalance() {
-        return insertedCoins.getValue();
+        return coinCassette.getBalance();
     }
 
     public List<Coin> rejectedCoins() {
-        return coinReturnTray.getCoins();
+        return coinCassette.rejectedCoins();
     }
 
     public void insert(Coin coin) {
-        if(Coin.PENNY.equals(coin)){
-            this.coinReturnTray.put(coin);
-            return;
+        CoinInsertionResult result = coinCassette.insert(coin);
+        if (CoinInsertionResult.ACCEPTED.equals(result)) {
+            display.show(coinCassette.getBalance().toString());
+        }
+    }
+
+    public PurchaseResult select(Product product) {
+        if (product.canBeBoughtFor(this.getBalance())) {
+            display.showForAMoment(THANK_YOU);
+            display.show(INSERT_A_COIN);
+            this.coinCassette.resetInsertedCoins();
+            return PurchaseResult.DISPENSED;
         }
 
-        this.insertedCoins.add(coin);
+        display.showForAMoment("PRICE " + product.getPrice());
+        return PurchaseResult.REJECTED;
     }
 }

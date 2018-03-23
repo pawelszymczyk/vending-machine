@@ -15,4 +15,8 @@ public class InsertedCoins {
     public void add(Coin coin) {
         insertedCoins.add(coin);
     }
+
+    public void reset() {
+        insertedCoins.clear();
+    }
 }

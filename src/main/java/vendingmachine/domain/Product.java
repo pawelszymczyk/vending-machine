@@ -12,11 +12,16 @@ public enum Product {
 
     private Money price;
 
+
     Product(Money price) {
         this.price = price;
     }
 
     public Money getPrice() {
         return price;
+    }
+
+    public boolean canBeBoughtFor(Money money) {
+        return this.price.isLessOrEqual(money);
     }
 }
