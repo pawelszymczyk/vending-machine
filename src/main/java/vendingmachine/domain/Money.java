@@ -25,6 +25,12 @@ public class Money {
         return new Money(this.value.add(that.value));
     }
 
+
+    public Money substract(Money that) {
+        return new Money(this.value.subtract(that.value));
+    }
+
+
     static Money money(double value){
         return new Money(value);
     }

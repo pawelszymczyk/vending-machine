@@ -39,4 +39,28 @@ class VendingMachineTest extends Specification {
         vendingMachine.balance.value == 0
         vendingMachine.coinReturnTray == [Coin.PENNY] as Set
     }
+
+    def "should create order when product select"() {
+        given:
+        def vendingMachine = new VendingMachine()
+
+        when:
+        vendingMachine.order(Product.CHIPS)
+
+        then:
+        vendingMachine.display == "PRICE ${Product.CHIPS.price}"
+    }
+
+    def "should finalize order"() {
+        given:
+        def vendingMachine = new VendingMachine()
+        vendingMachine.order(Product.CHIPS)
+
+        when:
+        vendingMachine.insert(Coin.QUARTER)
+        vendingMachine.insert(Coin.QUARTER)
+
+        then:
+        vendingMachine.display == "THANK YOU"
+    }
 }
