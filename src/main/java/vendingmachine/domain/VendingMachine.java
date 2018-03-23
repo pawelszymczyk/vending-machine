@@ -6,6 +6,7 @@ import static vendingmachine.domain.Money.money;
 
 public class VendingMachine {
 
+    private Money balance = money(0);
     private Set<Coin> coinReturnTray;
 
     public VendingMachine() {
@@ -17,7 +18,7 @@ public class VendingMachine {
             return "INSERT A COIN";
         }
 
-        return "zonk";
+        return balance.toString();
     }
 
     /**
@@ -25,7 +26,7 @@ public class VendingMachine {
      * sum of *valid* coins inserted, minus sold products, minus change
      */
     public Money getBalance() {
-        return money(0);
+        return balance;
     }
 
     /**
@@ -33,5 +34,15 @@ public class VendingMachine {
      */
     public Set<Coin> getCoinReturnTray() {
         return Collections.unmodifiableSet(coinReturnTray);
+    }
+
+    public void put(Coin coin) {
+
+        if(coin.equals(Coin.NICKEL)) {
+            balance = balance.add(coin.getMoney());
+            return;
+        }
+
+        coinReturnTray.add(coin);
     }
 }
