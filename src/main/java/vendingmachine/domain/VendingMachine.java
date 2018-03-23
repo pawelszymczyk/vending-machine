@@ -1,23 +1,25 @@
 package vendingmachine.domain;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import static vendingmachine.domain.Money.money;
 
 public class VendingMachine {
 
-    private Set<Coin> coinReturnTray;
+    private Display display;
+
+    private CoinCassete coinCassete;
 
     public VendingMachine() {
-        coinReturnTray = new HashSet<>();
+        display = new StandardDisplay();
+        coinCassete = new StandardCassete();
+
     }
 
     public String getDisplay() {
-        if (getBalance().isZero()) {
-            return "INSERT A COIN";
-        }
-
-        return "zonk";
+        return display.show();
     }
 
     /**
@@ -25,13 +27,23 @@ public class VendingMachine {
      * sum of *valid* coins inserted, minus sold products, minus change
      */
     public Money getBalance() {
-        return money(0);
+        return coinCassete.getBalance();
     }
 
     /**
      * @return unmodifiableSet
      */
     public Set<Coin> getCoinReturnTray() {
-        return Collections.unmodifiableSet(coinReturnTray);
+        return Collections.unmodifiableSet(coinCassete.getCoinReturnTray());
     }
+
+    public boolean injectCoin(Coin coin) {
+        if (coinCassete.injectCoin(coin)) {
+            display.updateDisplay("zonk");
+            return true;
+        }
+        return false;
+
+    }
+
 }

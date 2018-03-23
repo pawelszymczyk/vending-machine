@@ -28,6 +28,9 @@ public class Money {
     static Money money(double value){
         return new Money(value);
     }
+    static Money zero() {
+        return new Money(0);
+    }
 
     @Override
     public String toString() {
