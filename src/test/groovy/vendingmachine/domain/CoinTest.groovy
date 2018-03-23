@@ -21,4 +21,16 @@ class CoinTest extends Specification {
         DIME    | 0.1
         QUARTER | 0.25
     }
+
+    def "#coin should be #accepted"(Coin coin, boolean expected) {
+        expect:
+        coin.accepted == expected
+
+        where:
+        coin    | expected
+        PENNY   | false
+        NICKEL  | true
+        DIME    | true
+        QUARTER | true
+    }
 }

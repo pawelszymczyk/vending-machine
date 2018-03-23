@@ -38,7 +38,7 @@ public class VendingMachine {
 
     public void put(Coin coin) {
 
-        if(coin.equals(Coin.NICKEL)) {
+        if(coin.isAccepted()) {
             balance = balance.add(coin.getMoney());
             return;
         }

@@ -30,9 +30,9 @@ class VendingMachineTest extends Specification {
         vendingMachine.coinReturnTray == [Coin.PENNY] as Set
     }
 
-    def "should Nickel be accepted"() {
+    def "should #validCoin be accepted"(Coin validCoin) {
         when:
-        def Coin insertedCoin = NICKEL
+        def Coin insertedCoin = validCoin
         def vendingMachine = new VendingMachine()
         vendingMachine.put(insertedCoin)
 
@@ -41,5 +41,7 @@ class VendingMachineTest extends Specification {
         vendingMachine.display == insertedCoin.money.toString()
         vendingMachine.coinReturnTray == [] as Set
 
+        where:
+        validCoin << [NICKEL, DIME, QUARTER]
     }
 }
