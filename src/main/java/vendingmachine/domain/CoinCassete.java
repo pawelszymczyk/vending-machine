@@ -1,9 +1,11 @@
 package vendingmachine.domain;
 
-import java.util.Set;
+import java.util.List;
 
 interface CoinCassete {
     boolean injectCoin(Coin coin);
     Money getBalance();
-    Set<Coin> getCoinReturnTray();
+    List<Coin> getCoinReturnTray();
+    void resetBalance();
+    boolean couldAffortFor(Product product);
 }

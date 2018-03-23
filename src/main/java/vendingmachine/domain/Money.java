@@ -17,7 +17,6 @@ public class Money {
 
     public Money(BigDecimal value) {
         requireNonNull(value);
-
         this.value = round2(value);
     }
 
@@ -46,6 +45,10 @@ public class Money {
      */
     public BigDecimal getValue() {
         return value;
+    }
+
+    public boolean isGreaterThen(Money money) {
+        return this.getValue().compareTo(money.getValue()) != -1;
     }
 
     @Override
